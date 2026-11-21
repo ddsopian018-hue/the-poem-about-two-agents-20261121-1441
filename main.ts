@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 const poem = `I ran the numbers north,
 you ran them south.
@@ -26,3 +26,9 @@ if (codePoints < 1 || codePoints > 280 || poem.trim().length === 0) {
 }
 
 writeFileSync(`${outDir}/entry.txt`, poem, "utf8");
+
+// Read-back: a silent short write must fail loudly, not ship a truncated poem.
+const written = readFileSync(`${outDir}/entry.txt`, "utf8");
+if (written !== poem) {
+  throw new Error("entry.txt does not round-trip the poem");
+}
